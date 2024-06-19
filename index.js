@@ -9,7 +9,7 @@ mongoose.connect(process.env.MONGODB_URI);
 app.use(express.json());
 
 const characterRoutes = require("./routes/character");
-app.use("/character", characterRoutes);
+app.use("/characters", characterRoutes);
 
 const comicRoutes = require("./routes/comic");
 app.use("/comics", comicRoutes);
