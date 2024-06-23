@@ -5,7 +5,7 @@ const Comic = require("../models/Comic");
 
 router.get("/", async (req, res) => {
   try {
-    const { title, page, sort } = req.query;
+    const { title, page } = req.query;
     let apiUrl = `https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=${process.env.MARVEL_API_KEY}`;
     const response = await axios.get(apiUrl);
     let comics = response.data.results;
@@ -15,14 +15,15 @@ router.get("/", async (req, res) => {
       comics = comics.filter((comic) => regex.test(comic.title));
     }
 
-    const limit = 5;
-    const pageNumber = page || 1;
+    const limit = 8;
+    const pageNumber = parseInt(page) || 1;
     const numberToSkip = (pageNumber - 1) * limit;
-    const paginatedComics = comics.slice(numberToSkip, numberToSkip + limit);
+    const paginatedData = comics.slice(numberToSkip, numberToSkip + limit);
+    const totalPages = Math.ceil(comics.length / limit);
 
-    paginatedComics.sort();
+    paginatedData.sort();
 
-    res.status(200).json(paginatedComics);
+    res.status(200).json({ paginatedData, limit, pageNumber, totalPages });
   } catch (error) {
     console.log("error", error);
     res.status(500).json({ message: error.message });
